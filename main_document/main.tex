@@ -5,15 +5,19 @@
 \usepackage{graphicx}
 \usepackage{txfonts}
 \usepackage{wrapfig}
-\usepackage{color}
+\usepackage{color} 
 \usepackage{geometry}
+\usepackage{titlesec}
 
- 
 \graphicspath{{./title_page/graphics/}}
 
+\titleformat{\chapter}[hang]{\Huge\bfseries}{\thechapter}{10pt}{\Huge\bfseries}
+
 \definecolor{defaultRed}{RGB}{138,35,28}
+\setlength{\parindent}{5ex}
+
 \begin{document}
 \input{title_page/titlepage.tex}
 \tableofcontents
 \input{chapter_one/chapter_one.tex}
-\end{document}  
+\end{document}

@@ -1,3 +1,12 @@
 {
-    "cSpell.language": ",pl"
+    "cSpell.language": ",pl",
+    "editor.wordWrap": "on",
+    "latex-workshop.chktex.enabled": true,
+    "latex-workshop.view.pdf.viewer": "browser",
+    "cSpell.words": [
+        "mikroserwisami",
+        "mikroserwisowej",
+        "mikroserwisową",
+        "mikroserwisów"
+    ]
 }
