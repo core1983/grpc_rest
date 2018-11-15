@@ -4,9 +4,14 @@
     "latex-workshop.chktex.enabled": true,
     "latex-workshop.view.pdf.viewer": "browser",
     "cSpell.words": [
+        "Procedure",
+        "Remote",
         "mikroserwisami",
+        "mikroserwisowa",
         "mikroserwisowej",
         "mikroserwisową",
+        "mikroserwisy",
         "mikroserwisów"
-    ]
+    ],
+    "cSpell.enabled": true
 }

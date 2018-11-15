@@ -1,16 +1,25 @@
 \chapter{Wstęp}
 \section{Wprowadzenie}
-W ostatnich latach w świecie IT można było zauważyć trend polegający na promowaniu budowania dużych systemów jako aplikacji rozproszonych składających się z wielu serwisów. W dniu dzisiejszym rozwiązanie to określane jest architekturą \textbf{mikroserwisową}. Sama koncepcja nie jest 
-czymś zupełnie nowym i możemy określić ją jako rozwinięcie architektury SOA (Service Oriented Architecture). Idea tworzenia oprogramowania w architekturze mikroserwisowej polega na budowaniu niewielkich autonomicznych komponentów z których każdy odpowiada za konkretne zadanie. Elementy te współpracując ściśle ze sobą pozwalają na dostarczenie wymaganej logiki biznesowej. \par Wielu architektów oraz zespołów programistów wizja rozbicia swojej monolitycznej aplikacji na architekturę mikroserwisową zachęciła do prób budowania takich rozwiązań. Pomimo początkowego entuzjazmu popartego niezaprzeczalnymi zaletami mikroserwisów takimi jak:
+W ostatnich latach w świecie IT można było zauważyć trend polegający na promowaniu budowania dużych systemów jako aplikacji rozproszonych składających się z wielu serwisów. Prelegenci na różnych konferencjach programistycznych przepowiadali schyłek wszelkich problemów podczas budowania wielkich systemów wykorzystywanych w biznesie. W dniu dzisiejszym rozwiązanie to określane jest architekturą \textbf{mikroserwisową}. Sama koncepcja nie jest czymś zupełnie nowym i możemy określić ją jako rozwinięcie architektury SOA (Service Oriented Architecture). Idea tworzenia oprogramowania w architekturze mikroserwisowej polega na budowaniu niewielkich autonomicznych komponentów z których każdy odpowiada za konkretne zadanie. Elementy te współpracując ściśle ze sobą pozwalają na dostarczenie wymaganej logiki biznesowej. \par Wielu architektów oraz zespołów programistów wizja rozbicia swojej monolitycznej aplikacji na architekturę mikroserwisową zachęciła do prób budowania takich rozwiązań. Pomimo początkowego entuzjazmu popartego niezaprzeczalnymi zaletami mikroserwisów takimi jak:
 \begin{itemize}
-    \item możliwości stosowania różnych technologi
-    \item skalowalności
-    \item odporności na awarie
+	\item możliwości stosowania różnych technologi
+	\item skalowalności
+	\item odporności na awarie
 \end{itemize}
-dały o sobie znać wady, które spowodowały, że projektowanie, implementacja oraz utrzymanie takiej architektury stało się olbrzymim wyzwaniem dla firm produkujących oprogramowanie. Jednym z największych problemów okazał się sposób komunikacji pomiędzy kolejnymi mikroserwisami. Budowa \textbf{API} wymagała od architektów rozwiązania problemów w następujących kwestiach:
+dały o sobie znać wady, które spowodowały, że projektowanie, implementacja oraz utrzymanie takiej architektury stało się olbrzymim wyzwaniem dla firm produkujących oprogramowanie. Jednym z największych problemów okazał się sposób komunikacji pomiędzy kolejnymi mikroserwisami. Tym samym projektowanie interfejsów \textbf{API} wymagało od architektów oraz programistów rozwiązania problemów w następujących kwestiach:
 \begin{itemize}
-    \item wyboru formatu wymiany danych (JSON, XML itp.)
-    \item zaprojektowania endpointów
-    \item obsługi błędów
-    \item wydajności (ilość danych przy jednym wywołaniu serwisu, czas oczekiwania na odpowiedź)
+	\item wyboru formatu wymiany danych (JSON, XML itp.)
+	\item zaprojektowania ścieżek wywołania serwisów
+	\item obsługi błędów
+	\item wydajności (ilość danych przy jednym wywołaniu serwisu, czas oczekiwania na odpowiedź)
+	\item implementacji uwierzytelniania
 \end{itemize}
+Mimo tych przeszkód korporacje pokroju Amazon, Netflix czy Google budują swoje olbrzymie systemy w oparciu o mikroserwisy wykorzystując zróżnicowany stos technologi. Architektura mikroserwisowa przyczyniła się do spopularyzowania takich technologii jak chmura obliczeniowa (Amazon Web Services, Azure itp.) oraz rozwiązań opartych na kontenerach (Docker, Kubernetes). \par Technologiczny potentat jakim jest niewątpliwe firma Google opierając swój biznes na usługach sieciowych stworzyła w tym celu technologię gRPC opartą na protokole RPC (Remote Procedure Call), który miałby być panaceum na wyżej wymienione problemy w stosunku do klasycznego podejścia opartego na technologi REST.
+\section{Cel i założenia pracy}
+Celem niniejszej pracy jest zaprojektowanie oraz implementacja scenariuszy, które symulowałyby typowe problemy z jakimi spotykamy się podczas tworzenia architektury mikroserwisowej. Założenia każdego scenariusza obejmują:
+\begin{itemize}
+	\item identyfikację oraz opis rozpatrywanego problemu,
+	\item implementację mikroserwisów w technologiach RPC oraz REST,
+	\item ocenę efektywności zastosowanych rozwiązań popartą wnioskami lub pomiarami
+\end{itemize}
+Scenariusze zostały opracowane, aby zaprezentować podstawowe problemy w projektowaniu oraz implementacji mikroserwisów i nie wyczerpują każdego możliwego aspektu.
