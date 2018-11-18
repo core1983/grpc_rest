@@ -1,0 +1,80 @@
+\chapter{Przegląd istniejących rozwiązań}
+\section{Wstęp}
+Zarówno technologia REST jak i RPC nie są czymś nowy w świecie wymiany informacji pomiędzy systemami informatycznymi. Na rynku istnieje wiele lepszych lub gorszych rozwiązań, które można użyć przy projektowaniu i budowie architektury mikroserwisowej. Rozdział ten ma na celu przybliżenie najpopularniejszych dostępnych w chwili tworzenia pracy.
+\section{Rozwiązania oparte na technologii REST}
+\subsection{Spark Java}
+Powstała w roku 2014 biblioteka dedykowana językom Java oraz Kotlin. Założeniem autora było stworzenie technologii, która ułatwiałaby budowanie serwisów sieciowych bez zbędnego narzutu dodatkowych modułów tak jak ma to miejsce w rozwiązaniach typu Spring lub Jersey. W skład biblioteki wchodzą klasy odpowiedzialne za routing, ciasteczka, sesje, filtrowanie, obsługę błędów itp. Niewielkie rozmiary oraz podstawowa obsługa żądań REST sprawia, że idealnie nadaje się do tworzenia niewielkich serwisów, a wykorzystanie dobrodziejstw jakie przynosi ósme wydanie języka Java (funkcje lambda) pozwala pisać przejrzysty i kompaktowy kod.
+\begin{center}
+	\begin{lstlisting}[language=Java, caption=Przykład metody zwracającej tekst w Spark Java]
+        import static spark.Spark.*;
+        
+        public class HelloWorld {
+            public static void main(String[] args) {
+                get("/hello", (req, res) -> "Hello World");
+            }
+        }
+        \end{lstlisting}
+\end{center}
+\subsection{Flask}
+Python jest jednym z języków, który jest polecany do tworzenia mikroserwisów. Przeglądając dostępne rozwiązania dla tego języka najczęściej można natrafić na projekty wykorzystujące bibliotekę Flask, która posiada wbudowany router oraz pozwala pisać aplikacje składające się z modułów za pomocą obiektów zwanych Blueprints \cite{grinberg2018flask}. Ponadto mamy do dyspozycji cały wachlarz modułów odpowiedzialnych za zarządzenie sesją, logowanie, uwierzytelnianie oraz obsługę baz danych.
+\begin{center}
+	\begin{lstlisting}[language=Python, caption=Prosty model aplikacji z użyciem Flask]       
+        from flask import Flask, jsonify
+
+
+        # instantiate the app
+        app = Flask(__name__)
+
+
+        @app.route('/users/ping', methods=['GET'])
+        def ping_pong():
+            return jsonify({
+                'status': 'success',
+                'message': 'pong!'
+            })
+    \end{lstlisting}
+\end{center}
+\subsection{HapiJS}
+Postanie platformy nodejs, która zbudowana jest na podstawie silnika przeglądarki \textit{Chrome} zrewolucjonizowało świat aplikacji sieciowych. Pozwala on na budowanie asynchronicznego kodu serwerowego oraz aplikacji po stronie klienta w tym samym języku, czyli JavaScript. W chwili obecnej żadna inna technologia nie posiada tak wielu bibliotek oraz kompleksowych rozwiązań w swojej bazie. Jednym z popularniejszych jest stworzony w laboratoriach firmy Walmart HapiJS. W odróżnieniu od innych podobnych rozwiązań HapiJS dysponuje bogatą biblioteką wtyczek rozszerzających funkcjonalność \cite{brett2016getting}
+\begin{center}
+    \begin{lstlisting}[language=java, caption=Przykład uruchomienia serwera http w HapiJS]
+'use strict';
+
+const Hapi = require('hapi');
+
+const server = Hapi.server({
+  port: 3000,
+  host: 'localhost'
+});
+
+server.route({
+  method: 'GET',
+  path: '/',
+  handler: (request, h) => {
+    return 'Hello, world!';
+  }
+});
+
+server.route({
+  method: 'GET',
+  path: '/{name}',
+  handler: (request, h) => {
+    return 'Hello, ' + encodeURIComponent(request.params.name) + '!'
+    }
+});
+
+const init = async () => {
+  await server.start();
+  console.log(`Server running at: ${server.info.uri}`);
+};
+
+process.on('unhandledRejection', (err) => {
+  console.log(err);
+  process.exit(1);
+});
+
+init();
+    \end{lstlisting}
+\end{center}
+\subsection{ASP NET Core Web API}
+W roku 2016 Microsoft zaprezentował platformę net core. Jest to odświeżony, w pełni modułowy zestaw bibliotek wraz z środowiskiem przygotowanym do jego uruchomienia przygotowany do współpracy z systemami z rodziny Windows jak i dostępnymi na system Linux. Modułowa budowa pozwala na pobranie tylko tych zależności jakie są wymagane do uruchomienia aplikacji. Są to między innymi biblioteki odpowiedzialne za obsługę baz danych, logowania zdarzeń, uwierzytelniania itp. Każda biblioteka jest dostępna w repozytorium NuGet skąd bardzo łatwo można ją dołączyć do projektu. 

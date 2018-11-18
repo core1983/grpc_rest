@@ -9,8 +9,10 @@
 \usepackage{indentfirst}
 \usepackage{csquotes}
 \usepackage{geometry}
-\usepackage{titlesec}
+\usepackage{titlesec} 
 \usepackage{biblatex}
+\usepackage{listings}
+\usepackage{courier}
 
 \addbibresource{bibliography.bib}
 
@@ -19,6 +21,13 @@
 \titleformat{\chapter}[hang]{\Huge\bfseries}{\thechapter}{10pt}{\Huge\bfseries}
 
 \definecolor{defaultRed}{RGB}{138,35,28}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    basicstyle=\footnotesize\ttfamily
+}
+\renewcommand{\lstlistlistingname}{Listingi}
+\lstset{style=mystyle}
 \setlength{\parindent}{5ex}
 
 \begin{document}
@@ -26,4 +35,6 @@
 \tableofcontents
 \input{chapter_one/chapter_one.tex}
 \input{chapter_two/chapter_two.tex}
+
+\lstlistoflistings
 \end{document}
