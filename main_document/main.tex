@@ -13,8 +13,10 @@
 \usepackage{biblatex}
 \usepackage{listings}
 \usepackage{courier}
+\usepackage{float}
 
-\addbibresource{bibliography.bib}
+
+\addbibresource{bibliography.bib}  
 
 \graphicspath{{./title_page/graphics/}}
 
@@ -27,7 +29,7 @@
     basicstyle=\footnotesize\ttfamily
 }
 \renewcommand{\lstlistlistingname}{Listingi}
-\lstset{style=mystyle}
+\lstset{style=mystyle} 
 \setlength{\parindent}{5ex}
 
 \begin{document}
@@ -37,4 +39,5 @@
 \input{chapter_two/chapter_two.tex}
 
 \lstlistoflistings
+\listoftables
 \end{document}

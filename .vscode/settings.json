@@ -4,6 +4,9 @@
     "latex-workshop.chktex.enabled": true,
     "latex-workshop.view.pdf.viewer": "browser",
     "cSpell.words": [
+        "Found",
+        "Items",
+        "Name",
         "Procedure",
         "Remote",
         "mikroserwisami",
