@@ -9,13 +9,13 @@ W ostatnich latach w świecie IT można było zauważyć trend polegający na pr
 dały o sobie znać wady, które spowodowały, że projektowanie, implementacja oraz utrzymanie takiej architektury stało się olbrzymim wyzwaniem dla firm produkujących oprogramowanie. Jednym z największych problemów okazał się sposób komunikacji pomiędzy kolejnymi mikroserwisami. Tym samym projektowanie interfejsów API\cite{jacobson2015interfejs} wymagało od architektów oraz programistów rozwiązania problemów w następujących kwestiach:
 \begin{itemize}
 	\item wyboru formatu wymiany danych (JSON, XML itp.)
-	\item zaprojektowania ścieżek wywołania serwisów
+	\item zaprojektowania punktów końcowych wywołania serwisów
 	\item obsługi błędów
 	\item wydajności (ilość danych przy jednym wywołaniu serwisu, czas oczekiwania na odpowiedź)
 	\item implementacji uwierzytelniania
 	\item wybór technologi w której zostaną utworzone mikroserwisy
 \end{itemize}
-Mimo tych przeszkód korporacje pokroju Amazon, Netflix czy Google budują swoje olbrzymie systemy w oparciu o mikroserwisy wykorzystując zróżnicowany stos technologi. Architektura mikroserwisowa przyczyniła się do spopularyzowania takich technologii jak chmura obliczeniowa (Amazon Web Services, Azure itp.) oraz rozwiązań opartych na kontenerach (Docker, Kubernetes). \par Technologiczny potentat jakim jest niewątpliwe firma Google opierając swój biznes na usługach sieciowych stworzyła w tym celu technologię opartą na protokole RPC (Remote Procedure Call), która miałaby być panaceum na wyżej wymienione problemy w stosunku do \enquote{klasycznego} podejścia opartego na technologi REST.
+Mimo tych przeszkód korporacje pokroju Amazon, Netflix czy Google budują swoje olbrzymie systemy w oparciu o mikroserwisy wykorzystując zróżnicowany stos technologi. Architektura mikroserwisowa przyczyniła się do spopularyzowania takich technologii jak chmura obliczeniowa (Amazon Web Services, Azure itp.) oraz rozwiązań opartych na kontenerach (Docker, Kubernetes). \par Technologiczny potentat jakim jest niewątpliwe firma Google opierając swój biznes na usługach sieciowych stworzyła w tym celu technologię opartą na protokole RPC (Remote Procedure Call), która miałaby być panaceum na wyżej wymienione problemy w stosunku do \enquote{klasycznego} podejścia opartego na technologi REST\@.
 \section{Cel i założenia pracy}
 Celem niniejszej pracy jest zaprojektowanie oraz implementacja scenariuszy, które symulowałyby typowe problemy z jakimi spotykamy się podczas tworzenia architektury mikroserwisowej. Założenia każdego scenariusza obejmują:
 \begin{itemize}

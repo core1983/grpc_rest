@@ -1,20 +1,15 @@
 {
-    "cSpell.language": ",pl",
     "editor.wordWrap": "on",
     "latex-workshop.chktex.enabled": true,
     "latex-workshop.view.pdf.viewer": "browser",
-    "cSpell.words": [
-        "Found",
-        "Items",
-        "Name",
-        "Procedure",
-        "Remote",
-        "mikroserwisami",
-        "mikroserwisowa",
-        "mikroserwisowej",
-        "mikroserwisową",
-        "mikroserwisy",
-        "mikroserwisów"
+    "spellright.language": [
+        "English (British)",
+        "Polish"
     ],
-    "cSpell.enabled": true
+    "spellright.documentTypes": [
+        "markdown",
+        "latex",
+        "plaintext"
+    ],
+    "spellright.suggestionsInHints": false,
 }

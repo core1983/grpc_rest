@@ -14,11 +14,11 @@
 \usepackage{listings}
 \usepackage{courier}
 \usepackage{float}
-
+ 
 
 \addbibresource{bibliography.bib}  
 
-\graphicspath{{./title_page/graphics/}}
+\graphicspath{{./title_page/graphics/} {./chapter_two/graphics/}}
 
 \titleformat{\chapter}[hang]{\Huge\bfseries}{\thechapter}{10pt}{\Huge\bfseries}
 
@@ -38,6 +38,6 @@
 \input{chapter_one/chapter_one.tex}
 \input{chapter_two/chapter_two.tex}
 
-\lstlistoflistings
+\lstlistoflistings{}
 \listoftables
 \end{document}
