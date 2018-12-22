@@ -2,8 +2,8 @@
     "editor.wordWrap": "on",
     "latex-workshop.chktex.enabled": true,
     "spellright.language": [
-        "en",
-        "pl"
+        "English (British)",
+        "Polish"
     ],
     "spellright.documentTypes": [
         "markdown",

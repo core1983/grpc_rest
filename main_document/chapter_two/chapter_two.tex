@@ -303,7 +303,7 @@ Apache Thrift jest jedną z najnowszych technologii opartych na protokole RPC\@.
         \end{enumerate}
   \item \textbf{Bezpieczeństwo}-w celu zabezpieczenia każdego z serwisów przed nie autoryzowanym dostępem Apache Thrift udostępnia obiekt \textit{TSSLTransportFactory}, który zapewnia przechowywanie par kluczy RSA\@. Możliwe jest również tunelowanie SSH.\@
   \item \textbf{IDL \textit{Interface Definition Language}}-specjalnie przygotowany język opisu interfejsów w prosty sposób zapewnia programistom definiowanie serwisów. Definicja ta pozwala wygenerowanie kodu w każdym dostępnym języku o ile jest obsługiwany.
-  \begin{lstlisting}[language=XML, caption=Przykład definicji metody w języku IDL]
+        \begin{lstlisting}[language=XML, caption=Przykład definicji metody w języku IDL]
   namespace py thrift.example1
   namespace php thrift.example1
  
@@ -316,20 +316,92 @@ Przykład implementacji prostego serwisu w języku Java:
 \begin{enumerate}
   \item Aby móc skorzystać z Apache Thrift wymagana jest instalacja odpowiedniej biblioteki za pomocą, której możliwe będzie wygenerowanie kodu klienta oraz serwera.
   \item W piku o rozszerzeniu \textit{thrift} zostaje zapisana definicja serwisu z którego zostanie wygenerowany kod dla danego języka.
-  \begin{lstlisting}
-  // Nazwa modułu w jakim zostanie umieszczony wygenerowany kod
-  namespace py myservice
-
-  // Definicja wyjątku
-  exception InvalidOperationError {
-    1: i32 code,
-    2: string description
+        \begin{lstlisting}
+  namespace java com.paul.thrift.service
+    
+  exception MyException {
+      1: i32 code,
+      2: string exceptionDescription
   }
-  // Definicje serwisów
-  service MyFirstService {
-    oneway void log(1:string filename),
-    int multiply(1:int number1, 2:int number2),
-    int get_log_size(1:string filename) throws (1:MyError error),
+    
+  struct Resource {
+      1: i32 id,
+      2: string name,
+  }
+    
+  service MyService {
+    
+      Resource get(1:i32 id) throws (1:MyException ex),
+    
+      list <Resource> getResList() throws (1:MyException e),
+    
+  }
+  \end{lstlisting}
+  \item Następny krok polega na wygenerowaniu kodu możliwego do implementacji zdefiniowanego serwisu. W linii komend należy wpisać następuje polecenie:\\
+        \textit{\$ thrift -r -out generated --gen java myservice.thrift}
+        Po jego wykonaniu w katalogu \textit{generated}, który wskazano w poleceniu pojawią się następujące pliki z wygenerowanym kodem:
+        \begin{itemize}
+          \item Resource.java,
+          \item Service.java,
+          \item MyException.java
+        \end{itemize}
+  \item W kolejnym kroku należy stworzyć implementację zdefiniowanego serwisu:
+        \begin{lstlisting}[language=java, caption=Implementacja kodu usługi]
+  public class MyServiceImpl implements MyService.Iface {
+
+    @Override
+    public Resource get(int id) 
+      throws MyException, TException {
+        return new Resource();
+    }
+    
+    @Override
+    public List<Resource> getList() 
+      throws MyException, TException {
+        return Collections.emptyList();
+    }
 }
+  \end{lstlisting}
+  \item Gdy już usługa jest zdefiniowana potrzeba serwera, który będzie nasłuchiwał na wybranym porcie. Przykładowy serwer korzysta z klasy \textit{TThreadPoolServer}, która opakowuje pulę wątków ze standardowej biblioteki java, aby kod mógł być wykonywany asynchronicznie.
+        \begin{lstlisting}[language=java, caption=Kod serwera]
+public class MyServer {
+  
+  public static MyServiceImpl service;
+  
+  public static MyService.Processor processor;
+
+  public static void myServer(MyService.Processor processor) {
+    TServerTransport serverTransport = new TServerSocket(5000);
+    TServer server = new TThreadPoolServer(new TThreadPoolServer.
+    Args(serverTransport).processor(processor));
+    server.serve();
+  }
+  
+      public static void main(String [] args) {
+        service = new MyServiceImpl();
+        processor = new MyService.Processor(service);
+        Runnable server = new Runnable() {
+        public void run() {
+          myserver(processor);
+        }
+      };
+      new Thread(server).start();
+    }
+  }
+  \end{lstlisting}
+  \item Kod klienta można z powodzeniem zaimplementować do aplikacji, która będzie korzystać z usług zewnętrznego serwisu. W tym wypadku jest to niezależna aplikacja:
+        \begin{lstlisting}[language=java, caption=Kod klienta]
+  public class MyClient {
+    public static void main(String [] args) {
+
+    TTransport transport = new TSocket("localhost", 5000);
+    transport.open();
+    
+    TProtocol protocol = new TBinaryProtocol(transport);
+    MyService.Client client = new MyService.Client(protocol);
+        System.out.println(client.get());
+        transport.close();
+    }
+  }
   \end{lstlisting}
 \end{enumerate}
