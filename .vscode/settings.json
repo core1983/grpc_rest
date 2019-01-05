@@ -1,15 +1,2 @@
 {
-    "editor.wordWrap": "on",
-    "latex-workshop.chktex.enabled": true,
-    "spellright.language": [
-        "en",
-        "pl"
-    ],
-    "spellright.documentTypes": [
-        "markdown",
-        "latex",
-        "plaintext"
-    ],
-    "spellright.suggestionsInHints": false,
-    "latex-workshop.intellisense.package.enabled": true,
 }
