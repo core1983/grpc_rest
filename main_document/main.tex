@@ -10,13 +10,16 @@
 \usepackage{csquotes}
 \usepackage{geometry}
 \usepackage{titlesec} 
-\usepackage{biblatex}
+\usepackage[
+    backend=biber
+]{biblatex}
 \usepackage{listings}
 \usepackage{courier}
 \usepackage{float}    
 \usepackage{booktabs}
 \usepackage{url}
 \usepackage{array}
+\usepackage[polish]{babel}
 
 \geometry{
     top=10mm
@@ -26,7 +29,7 @@
 \newcolumntype{M}{>{\centering\arraybackslash}m{4cm}}
 \addbibresource{bibliography.bib}  
 
-\graphicspath{{./title_page/graphics/} {./chapter_three/graphics/}}
+\graphicspath{{./title_page/graphics/} {./chapter_three/graphics/} {./chapter_two/graphics/}}
 
 \titleformat{\chapter}[hang]{\Huge\bfseries}{\thechapter}{10pt}{\Huge\bfseries}
  
@@ -40,7 +43,8 @@
 \lstset{style=mystyle} 
 \setlength{\parindent}{4em}
 \setlength{\parskip}{1em}
- 
+\addbibresource{bibliography} 
+
 \begin{document} 
 \input{title_page/titlepage.tex}
 \tableofcontents
@@ -50,4 +54,5 @@
 
 \lstlistoflistings{}
 \listoftables
+\printbibliography
 \end{document} 
