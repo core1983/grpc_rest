@@ -1,0 +1,306 @@
+\chapter{Implementacja aplikacji}
+\section{Wybór technologii oraz narzędzi}
+\par Podczas projektowania oraz budowy mikroserwisów jednym z największych wyzwań dla architektów jest odpowiedni dobór stosu technologicznego jaki zostanie wykorzystany przy budowie konkretnego rozwiązania. Natura systemów składających się z wielu współpracujących ze sobą usług powoduje, że jest to kluczowa decyzja, która będzie miała wpływ na powodzenie projektu. Mnogość technologii nie ułatwia w tym przypadku wyboru i trzeba dopasować je do konkretnego zadania realizowanego przez usługę. Równie ważnym aspektem, który jest często pomijany przez osoby odpowiedzialne za dobór technologii jest dopasowanie użytych rozwiązań do kompetencji posiadanych przez pracowników zespołów programistycznych. Nie można użyć języka Ruby do budowania usługi jeśli większość zespołu posiada umiejętności programowania np. w języku Java. Nie mniej istotny jest sposób przechowywania danych przez każdą z usług. W systemach, które udostępniają rodzaj sieci społecznościowej bardzo pomocna może okazać się grafowa baza danych(np. ArangoDB). W innym przypadku, gdy system operuje na znacznych ilościach dokumentów można brać pod uwagę wykorzystania dokumentowej bazy danych(np. MongoDB).
+\par Do realizacji projektu systemu wykorzystano języki Golang oraz C\#. Język Go jest młodym językiem stworzonym w firmie Google. Cechując się prostotą oraz możliwością natywnej kompilacji praktycznie na każdą dostępną platformę świetnie nadaje się do budowy mikroserwisów. Moduł API w całości został stworzony na platformie net core. Wybór różnych języków jest podyktowany przedstawieniem w jaki sposób usługi współdziałają ze sobą w heterogenicznym środowisku. Do przechowywania danych został wybrany silnik PostgreSQL niemniej nic nie stoi na przeszkodzie aby wykorzystać inny system zarządzania niekoniecznie RDBMS. Całość została uruchomiona w środowisku Windows. Prace programistyczne wykonano przy pomocy produktów firmy JetBrains: Goland oraz Rider. Program HeidiSQL posłużył do zarządzania bazami danych.
+\section{Architektura serwisów}
+\par Usługi zostały stworzone jako osobne projekty. Każdy korzysta z osobnej bazy danych. Warstwa domenowa oraz obsługi bazy danych zostały zaimplementowane niezależnie od warstwy transportu umożliwiając wykorzystanie innych protokołów np. ampq. W związku z tym, każda usługa ma zaimplementowany serwer http oraz gRPC i tylko od klienta zależy który zostanie użyty do komunikacji. Serwery nasłuchują na portach podanych w pliku konfiguracyjnym list. 5.1. W przypadku usług napisanych w języku Golang serwer http został stworzony przy pomocy szkieletu Gin. Pomimo, że biblioteka standardowa tego języka oferuje bardzo dużo modułów umożliwiających tworzenie aplikacji sieciowych to szkielet aplikacji Gin uprasza wdrażanie punktów końcowych dodatkowo oferując znakomity zbiór oprogramowania pośredniego\textbf{(middleware)} umożliwiającego rozszerzenie tworzonego API. Moduł API stanowi projekt konsolowy dotnet core, który implementuje wszystkie usługi klienta. W tym przypadku tak samo jak dla mikroserwisów można wykorzystać dowolną technologię obsługującą protokoły http oraz gRPC.
+\begin{lstlisting}[columns=fullflexible,  caption=Przykład konfiguracji usługi]
+database:
+  connectionstring: "host=localhost port=5432 user=paul password=***** 
+  dbname=user_db sslmode=disable"
+
+serverGrpc:
+  port: 7001
+serverHttp:
+  port: 9090
+\end{lstlisting}
+\subsection{Sposoby komunikacji}
+\par Wszystkie serwisy komunikują się pomiędzy sobą na dwa sposoby. W przypadku wykorzystania podejścia REST serwery wystawiają swoje usługi w sieci do których dostęp jest za pomocą metod http w połączeniu z odpowiednimi punktami końcowymi opisanymi za pomocą adresów URI. Natomiast usługi klienckie konsumują je zwracając, bądź nie odpowiedź.
+Komunikacja pomiędzy usługami w szkielecie komunikacji gRPC oparta jest na implementacji struktur danych komunikatów oraz metod, które służą do ich przekazywania. Dzięki temu możliwe jest wygenerowanie klas oraz metod dla każdego języka obsługiwanego przez szkielet gRPC. Za pomocą wygenerowanego kodu możliwe jest zaimplementowanie
+\subsection{Opis struktur oraz metod wykorzystanych w usługach}
+\par
+\begin{enumerate}
+    \item Usługa użytkownik:
+          \begin{itemize}
+              \item \textbf{CreateUser}-metoda za pomocą której dodamy do bazy danych nowego użytkownika. W żądaniu przyjmuje nazwę użytkownika zwracając unikalny identyfikator ID oraz czas utworzenia,
+              \item \textbf{GetUserByID}-metoda zwracająca użytkownika o podanym w żądaniu identyfikatorze ID,
+              \item \textbf{GetUsersList}-zwraca listę wszystkich użytkowników. W żądaniu należy przesłać pusty komunikat.
+          \end{itemize}
+    \item Usługa katalog:
+          \begin{itemize}
+              \item \textbf{CreateBook}-metoda służąca do dodania nowej książki. W żądaniu przekazuje się numer isbn, tytuł, autora oraz cenę. Metoda zwraca strukturę książki wraz z identyfikatorem,
+              \item \textbf{GetBookByID}-metoda zwracająca książkę o podanym w żądaniu identyfikatorze ID,
+              \item \textbf{GetBooksList}-zwraca listę wszystkich książek z katalogu. W żądaniu należy przesłać pusty komunikat.
+          \end{itemize}
+    \item Usługa zamówienie:
+          \begin{itemize}
+              \item \textbf{CreateOrder}-metoda serwisu tworzy nowe zamówienia dla użytkownika. W żądaniu należy podać identyfikator użytkownika dla którego będzie utworzone zamówienie oraz zbiór zmówionych książek(identyfikator ID) wraz z ilością dla każdej pozycji.
+              \item \textbf{GetOrdersForUser}- metoda zwracająca całą historię zamówień dla użytkownika. Metoda w żądaniu
+                    przyjmuje identyfikator użytkownika zwracając rekord zamówienia wraz z wszystkimi pozycjami książek.
+          \end{itemize}
+\end{enumerate}
+\par W przypadku wykorzystania do komunikacji usług REST wymagane było stworzenie odpowiednich punktów końcowych z specjalnie przygotowanymi adresami URI. \textbf{V1} oznacza wersję wstawionego API, w przyszłości gdyby zaszła konieczność zmian można podnieść jego wersję.
+\begin{table}[h]
+    \begin{center}
+        \caption{Opis identyfikatorów URI dla metod}
+        \hspace*{-1cm}
+        \begin{tabular}{|M|c|L|}
+            \toprule
+            \textbf{Operacja} & \textbf{Metoda} & \textbf{Identyfikator URI}                \\
+            \midrule
+            CreateUser        & POST            & \url{http://localhost:PORT/v1/user/:name} \\
+            \midrule
+            GetUserByID       & GET             & \url{http://localhost:PORT/v1/user/:id}   \\
+            \midrule
+            GetUsersList      & GET             & \url{http://localhost:PORT/v1/users}      \\
+            \midrule
+            CreateBook        & POST            & \url{http://localhost:PORT/v1/book}       \\
+            \midrule
+            GetBookByID       & GET             & \url{http://localhost:PORT/v1/book/:id}   \\
+            \midrule
+            GetBooksList      & GET             & \url{http://localhost:PORT/v1/books}      \\
+            \midrule
+            CreateOrder       & POST            & \url{http://localhost:PORT/v1/order}      \\
+            \midrule
+            GetOrdersForUser  & GET             & \url{http://localhost:PORT/v1/order/:id}  \\
+            \bottomrule
+        \end{tabular}
+        \hspace*{-1cm}
+    \end{center}
+\end{table}
+\par W każdym z plików proto jako opcjonalnie zdefiniowano nazwy pakietu dla języka Go oraz przestrzeni nazw dla C\#. Zabieg ten ma na celu wyeliminowanie pomyłek podczas importu określonych klas oraz struktur danych.
+\par Na poniższych listingach zostały przedstawione wszystkie dane potrzebne do wygenerowania kodu serwera i klienta. Bardzo ważną rzeczą jest to aby klient oraz serwer korzystały z identycznych definicji. Nawet niewielka zmiana w kolejności pól komunikatów spowoduje, że komunikacja pomiędzy serwerem, a klientem nie dojdzie do skutku. Aby wygenerować kod dla klienta oraz serwera dla języka go w systemie operacyjnym muszą zostać zainstalowany kompilator protobuf oraz plugin dla języka Go umożliwiający wygenerowanie metod dla usług RPC. Następnie należy użyć polecenia w katalogu w którym znajduje się dany plik proto:
+\begin{center}
+    \begin{lstlisting}[caption=Polecenie do generowania kodu z plików proto dla języka Go]
+        protoc --go_out=plugins=grpc:. user.proto
+    \end{lstlisting}
+\end{center}
+W przypadku języka C\# muszą zostać dodane pakiety NuGet Grpc Grpc.Tools oraz Google.Protobuf. Kolejnym krokiem jest edycja pliku projektu csproj.xml i dodanie na poniższej pozycji:
+\begin{lstlisting}[language=xml, caption=Modyfikacjie pliku projektu net core]
+<ItemGroup>
+  <Protobuf Include="**/*.proto" OutputDir="%(RelativePath)" 
+  CompileOutputs="false" />
+</ItemGroup>
+\end{lstlisting}
+\begin{lstlisting}[language=IDL, caption=Definicje usług i komunikatów dla usługi katalogu książek]
+syntax = "proto3";
+
+package pb;
+
+option go_package="catalogpb";
+option csharp_namespace="catalogpb";
+
+service CatalogService {    
+  rpc CreateBook (CreateBookRequest) returns (CreateBookResponse) {}
+   
+  rpc GetBookByID (GetBookRequest) returns (GetBookResponse) {}
+  
+  rpc GetBooksList (GetBooksRequest) returns (GetBooksResponse) {}
+}
+
+message Book {
+    string id = 1;
+    string isbn = 2;
+    string title = 3;
+    string author = 4;
+    double price = 5;
+}
+
+message CreateBookRequest {
+    string isbn = 1;
+    string title = 2;
+    string author = 3;
+    double price = 4;
+}
+
+message CreateBookResponse {
+    Book book = 1;
+}
+
+message GetBookRequest {
+    string id = 1;
+}
+
+message GetBookResponse {
+    Book book = 1;
+}
+
+message GetBooksRequest {
+}
+
+message GetBooksResponse {
+    repeated Book books = 1;
+}
+\end{lstlisting}
+\begin{lstlisting}[language=IDL, caption=Definicje usług i komunikatów dla usługi zamówień] 
+syntax = "proto3";
+
+package pb;
+
+option go_package = "orderpb";
+option csharp_namespace = "orderpb";
+
+service OrderService {
+ rpc CreateOrder (CreateOrderRequest) 
+ returns (CreateOrderResponse) {}
+ 
+ rpc GetOrdersForUser (GetOrdersForUserRequest) 
+ returns (GetOrdersForUserResponse) {}
+}
+
+message Order {
+    string id = 1;
+    bytes createdAt = 2;
+    string userId = 3;
+    double totalPrice = 4;
+    message OrderBook {
+        string id = 1;
+        string isbn = 2;
+        string title = 3;
+        string author = 4;
+        double price = 5;
+        uint32 quantity = 6;
+    }
+    repeated OrderBook books = 5;
+}
+
+message CreateOrderRequest {
+    message OrderBook {
+        string book_id = 2;
+        uint32 quantity = 3;
+    }
+
+    string user_id = 2;
+    repeated OrderBook books = 4;
+}
+
+message CreateOrderResponse {
+    Order order = 1;
+}
+
+message GetOrderRequest {
+    string id = 1;
+}
+
+message GetOrderResponse {
+    Order order = 1;
+}
+
+message GetOrdersForUserRequest {
+    string user_id = 1;
+}
+
+message GetOrdersForUserResponse {
+    repeated Order orders = 1;
+}
+\end{lstlisting}
+\begin{lstlisting}[language=IDL, caption=Definicje usług i komunikatów dla usługi użytkownicy] 
+syntax = "proto3";
+
+package pb;
+
+option go_package = "userpb";
+
+service UserService {
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse){}
+  rpc GetUserByID (UserRequest) returns (UserResponse){}
+  rpc GetUsersList (UsersListRequest) returns (UsersListResponse){}
+}
+
+message User {
+    string id = 1;
+    string user_name = 2;
+    bytes created_at = 3;
+
+}
+message CreateUserRequest {
+    string user_name = 1;
+}
+message CreateUserResponse {
+    User user = 1;
+}
+message GetUserRequest {
+    string id = 1;
+}
+message GetUserResponse {
+    User user = 1;
+}
+message GetUsersListRequest {
+
+}
+message GetUsersListResponse {
+    repeated User users = 1;
+}
+\end{lstlisting}
+\subsection{Generowanie kodu serwera oraz klienta}
+\par
+\section{Bezpieczeństwo mikroserwisów}
+\subsection{Protokół SSL/TLS}
+\par W każdym systemie opartym na architekturze mikroserwisowej niebagatelne znaczenie ma bezpieczeństwo. Z uwagi na fakt, że poszczególne usługi do wymiany informacji pomiędzy sobą wykorzystują połączenia sieciowe należy zadbać, aby dane te nie mogły być odczytane przez niepowołane osoby. Jedną z najpopularniejszych technik szyfrowania danych w sieci jest wykorzystanie protokołów bezpiecznej komunikacji SSL/TLS.
+\par Budowę bezpiecznego tunelu komunikacji sieciowej rozpoczyna się od wygenerowania silnego klucza prywatnego dla serwera, który zostaje podpisany certyfikatem wydanym przez instytucję autoryzacyjną(CA - Certificate Authority). Certyfikat taki jest wydawany czasowo. W chwili obecnej klucze są generowane w oparciu o algorytm RSA o wielkości 2048-bitów. Oczywiście można zapewnić jeszcze większe bezpieczeństwo używając kluczu 4096-bitowych jednak wiąże się to ze zwiększonym zapotrzebowaniem zasobów obliczeniowych oraz pamięci. W rozdziale tym wykorzystana zostanie biblioteka OpenSSL w celu wygenerowania oraz podpisania klucza prywatnego serwera usługi sieciowej.
+\subsection{Generowanie certyfikatu SSL}
+
+\begin{itemize}
+    \item Generowanie CA
+          \begin{lstlisting}
+openssl genrsa -passout pass:1111 -des3 -out ca.key 4096
+\end{lstlisting}
+    \item Wygenerowanie pliku certyfikatu, który będzie rozpowszechniony wszystkim klientom
+\begin{lstlisting}
+openssl req -passin pass:1111 -new -x509 -days 365 -key ca.key -out ca.crt -subj  "/CN=MyRootCA"
+ -out ca.crt -subj "/CN=localhost"
+\end{lstlisting}
+    \item Generowanie prywatnego klucza dla serwera
+          \begin{lstlisting}
+openssl genrsa -passout pass:1111 -des3 -out server.key 4096
+\end{lstlisting}
+    \item Pobranie certyfikatu dla klucza z lokalnego CA
+          \begin{lstlisting}
+openssl req -passin pass:1111 -new -key server.key -out
+server.csr -subj "/CN=localhost"
+\end{lstlisting}
+    \item Podpisanie klucza pobranym certyfikatem
+          \begin{lstlisting}
+openssl x509 -req -passin pass:1111 -days 365 -in server.csr
+ -CA ca.crt -CAkey ca.key -set_serial 01 -out server.crt
+Signature ok
+subject=CN=localhost
+Getting CA Private Key
+\end{lstlisting}
+    \item Konwersja prywatnego klucza do formatu pem
+          \begin{lstlisting}
+openssl pkcs8 -topk8 -nocrypt -passin pass:1111 -in server.key
+ -out server.pem
+\end{lstlisting}
+\end{itemize}
+\subsection{Uruchomienie serwera HTTP z obsługą SSL\\TLS}
+\subsection{Uruchomienie serwera gRPC z obsługą SSL\\TLS}
+\par Wygenerowane pliki
+\section{Obsługa błędów}
+\section{Komunikacja asynchroniczna}
+\par W związku z tym, że protokół HTTP jest z natury protokołem synchronicznym nie możliwe było porównanie takiego sposobu komunikacji.
+\section{Wydajność}
+\par Z systemów opartych na architekturze mikroserwisowej bardzo często korzysta olbrzymia ilość użytkowników co powoduje znaczny wzrost danych przesyłanych między usługami. Dlatego istotne jest, aby paczki danych były jak najmniejsze. Problem stanowią także formaty, które muszą podlegać ciągłej serializacji oraz deserializacji. Pociąga to za sobą wyższe użycie zasobów sprzętowych do przeprowadzenia tej operacji.
+\par W podrozdziale tym znajdują się wyniki testów wydajności niektórych metod, które obrazują stosunek wydajności do zastosowanej metody komunikacji. W tabeli 5.2 umieszczono wyniki czasów dla operacji odczytu oraz zapisu danych w bazie dla usługi użytkownik. Przeprowadzono próby dla iteracji 100, 1000 oraz 10000.
+\begin{table}[h!]
+    \begin{center}
+        \caption{Test wydajności dla podanych iteracji}
+        \hspace*{-1cm}
+        \begin{tabular}{||M|c|c|c||}
+            \toprule
+            \textbf{Operacja} & \textbf{Iteracje 100} & \textbf{Iteracje 1000} & \textbf{Iteracje 10000} \\
+            \midrule
+            GetUserByIdHTTP   & 00:00:00:80           & 00:00:03:98            & 00:00:39:08             \\
+            \midrule
+            CreateUserHTTP    & 00:00:00:66           & 00:00:04:56            & 00:00:42:91             \\
+            \midrule
+            GetUserByIdGrpc   & 00:00:00:17           & 00:00:00:71            & 00:00:04:93             \\
+            \midrule
+            CreateUserGrpc    & 00:00:00:21           & 00:00:01:07            & 00:00:08:66             \\
+            \midrule
+            \bottomrule
+        \end{tabular}
+        \hspace*{-1cm}
+    \end{center}
+\end{table}
+Jak widać

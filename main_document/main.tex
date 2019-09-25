@@ -21,15 +21,15 @@
 \usepackage{array}
 \usepackage[polish]{babel} 
  
-\geometry{
-    top=10mm
+\geometry{ 
+    top=10mm 
 } 
    
 \newcolumntype{L}{>{\centering\arraybackslash}m{9.5cm}}
 \newcolumntype{M}{>{\centering\arraybackslash}m{4cm}}
 \addbibresource{bibliography.bib}  
 
-\graphicspath{{./title_page/graphics/} {./chapter_three/graphics/} {./chapter_two/graphics/}}
+\graphicspath{{./title_page/graphics/} {./chapter_three/graphics/} {./chapter_two/graphics/} {./chapter_four/graphics/}}
 
 \titleformat{\chapter}[hang]{\Huge\bfseries}{\thechapter}{10pt}{\Huge\bfseries}
  
@@ -45,15 +45,17 @@
 \setlength{\parskip}{1em}
 \addbibresource{bibliography} 
 
-\begin{document} 
+\begin{document}
 \input{title_page/titlepage.tex}
 \tableofcontents
 \input{chapter_one/chapter_one.tex}
 \input{chapter_two/chapter_two.tex}
 \input{chapter_three/chapter_three.tex}
 \input{chapter_four/chapter_four.tex}
+\input{chapter_five/chapter_five.tex}
+\input{chapter_six/chapter_six.tex}
 
 \lstlistoflistings{}
 \listoftables
 \printbibliography
-\end{document} 
+\end{document}

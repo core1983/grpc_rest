@@ -1,0 +1,26 @@
+\chapter{Podsumowanie}
+\section{Ocena efektów pracy}
+\par Budowanie od podstaw aplikacji rozproszonej opartej na mikroserwisach nie jest proste. Zaplanowanie podziału funkcjonalności na poszczególne usługi będzie sprawiało architektom wiele problemów. Szalenie ważne jest określenie warunków przekazywania danych między usługami, gdyż ma to wpływ na dalszy rozwój systemu. Szkielet gRPC potrafi lepiej kontrolować spójność struktur danych jakie są wymieniane pomiędzy usługami. Wolność jaką daje REST może doprowadzać do niespójności w implementacji rozwiązań. 
+\section{Planowany rozwój aplikacji}
+\par Aplikacja zbudowana na potrzeby niniejszej pracy realizuje wszystkie postawione przed nią założenia. Jednak zważywszy na charakter architektury mikroserwisowej niewielkim kosztem można dokładać do niej kolejne moduły. Podczas planowania budowy sugerowano się całkowitą autonomicznością każdej z usług więc nic nie stoi aby działały osobno w systemach nie związanych z domeną w której miały funkcjonować pierwotnie. Do obecnego projektu można dołożyć takie usługi jak:
+\begin{itemize}
+    \item Usługę wysyłania wiadomości email wysyłająca potwierdzenia złożenia zamówienia,
+    \item System autoryzacji użytkowników,
+    \item Moduł rekomendacji oparty na historii zamówień
+\end{itemize}
+Jak widać możliwości dokładania kolejnych funkcjonalności są praktycznie nieograniczone. Dodatkowo przez otwarte API każdego z mikroserwisów można rozszerzać funkcje poprzez integrację z systemami zewnętrznych podmiotów takich jak Goole Books.
+\section{Wnioski}
+\par Wykorzystując technologie REST i RPC do budowy mikroserwisów w tym samym czasie powoduje, że lepiej można dojrzeć ich wady i zalety. Proponowany przez firmę Google szkielet budowy aplikacji pomimo młodego wieku(10 lat) jest już na tyle rozwinięty, że można go z powodzeniem wykorzystywać w środowisku produkcyjnym. Mimo tego protokół HTTP 1.1 oraz technologia REST nie muszą się obawiać rychłego upadku, gdyż znacznie lepiej są dostosowane do realiów przesyłania treści konsumowanej przez przeglądarki internetowe. Historia już pokazała, że kolejne rozwiązania oparte na RPC zostawały wyparte przez kolejne, a protokół HTTP trwał dalej. Google krok po kroku czy to przez gRPC czy też przez faworyzowanie stron z wdrożonym protokołem SSL przybliża nas do zastąpienia protokołu HTTP 1.1 nowszą wersją. Na chwilę obecną technologia gRPC znalazła swoją niższe i być może w przyszłości będzie wykorzystywana w przeglądarkach internetowych. 
+\section{Realizacja efektów kształcenia}
+\begin{enumerate}
+    \item \textit{Przedstawiać w jasny sposób, zagadnienia teoretyczne niezbędne do zdefiniowania i rozwiązania wybranego problemu informatycznego.} W rozdziale \textit{Teoretyczne podstawy integracji mikroserwisów} opisano szczegółowo technologie oraz koncepcje wykorzystywane podczas budowy architektury opartej na usługach rozproszonych,
+    \item \textit{ Definiować problem informatyczny i jego składowe, dostrzegając ich wzajemne powiązania.} Podrozdział \textit{Cel i założenia pracy} definiuje problemy z którymi trzeba się zmierzyć podczas budowy mikroserwisów,
+    \item \textit{Wykorzystywać do formułowania i rozwiązywania zadania inżynierskiego wiedzę i umiejętności nabyte w trakcie studiów.} Do rozwiązania problemów napotkanych w kolejnych krokach projektowania, budowy oraz wdrażania zostały wykorzystane umiejętności oraz wiedza zdobyte w ramach następujących kursów:
+    \begin{itemize}
+        \item Projektowanie sieci komputerowych,
+        \item Systemy operacyjne,
+        \item Zaawansowane systemy baz danych
+    \end{itemize}
+    \item \textit{Projektować i przeprowadzać eksperymenty informatyczne obejmujące zagadnienia niezbędne do rozwiązania nieskomplikowanego problemu informatycznego} Projekt oraz założenia dotyczące budowy systemu zostały Przedstawione w rozdziale \textit{Projekt aplikacji mikroserwisowej}  
+    \item \textit{Formułować prawidłowe wnioski i sądy dotyczące rozwiązywanego problemu informatycznego.} Wnioski dotyczące rozwiązywanych problemów oraz analiza wdrożonych rozwiązań zostały opisane w rozdziale \textit{Podsumowanie i wnioski}
+\end{enumerate}
